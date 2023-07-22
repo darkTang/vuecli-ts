@@ -1,0 +1,16 @@
+{
+  "presets": ["@vue/cli-plugin-babel/preset"]
+}
+
+// 或下面的配置
+// 处理ts文件可以用@babel/preset-typescript，也可以用ts-loader，但是ts-loader必须基于tsconfig.ts
+
+// {
+//   "presets": [
+//     "@babel/preset-env",
+//     ["@babel/preset-typescript", {
+//       // 这个配置是为了处理.vue文件解析后的ts文件
+//       "allExtensions": true
+//     }]
+//   ]
+// }

@@ -8,8 +8,8 @@ const devConfig: Configuration = merge(baseConfig, {
   devtool: 'cheap-module-source-map',
   devServer: {
     hot: true,
+    historyApiFallback: true,
   },
-  
 });
 
 export default devConfig

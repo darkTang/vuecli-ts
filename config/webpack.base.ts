@@ -1,8 +1,9 @@
+import { VueLoaderPlugin } from "vue-loader";
 import ESLintWebpackPlugin from "eslint-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
-import { Configuration } from "webpack";
+import { Configuration, DefinePlugin } from "webpack";
 
 const isDev = process.env.NODE_ENV === "development";
 const handleStyleLoaders = [
@@ -18,6 +19,9 @@ const baseConfig: Configuration = {
     filename: "js/[name].[contenthash:10].js",
     chunkFilename: "js/[name].chunk.[contenthash:10].js",
     assetModuleFilename: "static/[hash][ext][query]",
+  },
+  resolve: {
+    extensions: [".vue", ".ts", ".js"],
   },
   module: {
     rules: [
@@ -61,7 +65,20 @@ const baseConfig: Configuration = {
       {
         test: /\.tsx?/,
         exclude: /node_modules/,
-        use: "ts-loader",
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              cacheDirectory: true,
+              cacheCompression: false,
+            },
+          },
+          "ts-loader",
+        ],
+      },
+      {
+        test: /\.vue$/,
+        use: "vue-loader",
       },
     ],
   },
@@ -78,6 +95,11 @@ const baseConfig: Configuration = {
       }),
     new ESLintWebpackPlugin({
       context: path.resolve(__dirname, "../src"),
+    }),
+    new VueLoaderPlugin(),
+    new DefinePlugin({
+      __VUE_PROD_DEVTOOLS__: false,
+      __VUE_OPTIONS_API__: true,
     }),
   ],
   optimization: {
