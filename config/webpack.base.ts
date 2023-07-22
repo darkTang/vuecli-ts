@@ -4,6 +4,9 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
 import { Configuration, DefinePlugin } from "webpack";
+import AutoImport from "unplugin-auto-import/webpack";
+import Components from "unplugin-vue-components/webpack";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
 const isDev = process.env.NODE_ENV === "development";
 const handleStyleLoaders = [
@@ -19,6 +22,7 @@ const baseConfig: Configuration = {
     filename: "js/[name].[contenthash:10].js",
     chunkFilename: "js/[name].chunk.[contenthash:10].js",
     assetModuleFilename: "static/[hash][ext][query]",
+    clean: true,
   },
   resolve: {
     extensions: [".vue", ".ts", ".js"],
@@ -78,7 +82,7 @@ const baseConfig: Configuration = {
       },
       {
         test: /\.vue$/,
-        use: "vue-loader",
+        loader: "vue-loader",
       },
     ],
   },
@@ -88,7 +92,7 @@ const baseConfig: Configuration = {
       filename: "index.html",
       inject: "body",
     }),
-    isDev &&
+    !isDev &&
       new MiniCssExtractPlugin({
         filename: "css/[name].[contenthash:10].css",
         chunkFilename: "css/[name].chunk.[contenthash:10].css",
@@ -101,13 +105,40 @@ const baseConfig: Configuration = {
       __VUE_PROD_DEVTOOLS__: false,
       __VUE_OPTIONS_API__: true,
     }),
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
+    }),
   ],
   optimization: {
     splitChunks: {
       chunks: "all",
+      cacheGroups: {
+        vue: {
+          test: /[\\/]node_modules[\\/]vue(.*)?[\\/]/,
+          name: "vue.chunk",
+          reuseExistingChunk: true,
+          priority: 40,
+        },
+        elementPlus: {
+          test: /[\\/]node_modules[\\/]element-plus[\\/]/,
+          name: "elementPlus.chunk",
+          reuseExistingChunk: true,
+          priority: 30,
+        },
+        lib: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "lib.chunk",
+          reuseExistingChunk: true,
+          priority: 20,
+        },
+      },
     },
     runtimeChunk: true,
   },
+  performance: false,
 };
 
 export default baseConfig;

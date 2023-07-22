@@ -1,6 +1,7 @@
 <template>
   <div>
     heghgllo-{{ name }}
+    <el-button type="primary">按钮</el-button>
     <li>
       <RouterLink to="/home">Home</RouterLink>
     </li>
@@ -12,6 +13,7 @@
 </template>
 
 <script setup>
+import { ElButton } from 'element-plus';
 import { ref } from 'vue'
 const name = ref('zs')
 </script>
